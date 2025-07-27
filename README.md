@@ -1,2 +1,0 @@
-# bluffcon.github.io
-blfkrko
