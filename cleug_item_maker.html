@@ -1,1 +1,245 @@
-html editor will be here
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cleug Item Editor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .editor-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .output {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            min-height: 200px;
+            margin-top: 10px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .output-text {
+            color: #2c3e50;
+        }
+        
+        .optional-part {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cleug Item Editor</h1>
+            <p class="description">
+                Making uniform items can be a hassle, especially for a datapack that already has some kind of item theming.
+                The output will automatically update as you type. Use the checkbox to include or exclude optional content.
+            </p>
+        </header>
+        
+        <div class="editor-container">
+            <div class="input-section">
+                <h2 class="section-title">Input Fields</h2>
+                
+                <div class="input-group">
+                    <label for="fieldA">Field A (Required)</label>
+                    <input type="text" id="fieldA" placeholder="Enter text for field A">
+                </div>
+                
+                <div class="input-group">
+                    <label for="fieldB">Field B (Required)</label>
+                    <input type="text" id="fieldB" placeholder="Enter text for field B">
+                </div>
+                
+                <div class="input-group">
+                    <label for="fieldC">Field C (Required)</label>
+                    <input type="text" id="fieldC" placeholder="Enter text for field C">
+                </div>
+                
+                <div class="input-group">
+                    <label for="fieldD">Field D (Optional)</label>
+                    <input type="text" id="fieldD" placeholder="Enter text for field D">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="includeFieldD">
+                        <label for="includeFieldD">Include Field D in output</label>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="fieldE">Field E (Optional)</label>
+                    <input type="text" id="fieldE" placeholder="Enter text for field E">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="includeFieldE">
+                        <label for="includeFieldE">Include Field E in output</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h2 class="section-title">Generated Output</h2>
+                <div class="output">
+                    <p class="output-text" id="generatedOutput">
+                        The output will appear here as you type...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get all input elements
+        const inputs = document.querySelectorAll('input[type="text"]');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+        // Add event listeners to all input fields and checkboxes
+        inputs.forEach(input => {
+            input.addEventListener('input', updateOutput);
+        });
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateOutput);
+        });
+        
+        // Function to update the output in real-time
+        function updateOutput() {
+            // Get values from input fields
+            const fieldA = document.getElementById('fieldA').value || '[A]';
+            const fieldB = document.getElementById('fieldB').value || '[B]';
+            const fieldC = document.getElementById('fieldC').value || '[C]';
+            const fieldD = document.getElementById('fieldD').value;
+            const fieldE = document.getElementById('fieldE').value;
+            
+            // Get checkbox states
+            const includeFieldD = document.getElementById('includeFieldD').checked;
+            const includeFieldE = document.getElementById('includeFieldE').checked;
+            
+            // Generate the output string
+            let output = `123${fieldA}, lebo ${fieldB}, ${fieldC}`;
+            
+            // Add optional parts if checked and not empty
+            if (includeFieldD && fieldD) {
+                output += `, yoo(${fieldD})`;
+            }
+            
+            if (includeFieldE && fieldE) {
+                output += `, extra(${fieldE})`;
+            }
+            
+            output += ' ingus';
+            
+            // Update the output element
+            document.getElementById('generatedOutput').textContent = output;
+        }
+    </script>
+</body>
+</html>
+
+
