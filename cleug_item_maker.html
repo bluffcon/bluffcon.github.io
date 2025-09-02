@@ -150,18 +150,33 @@
                 <h2 class="section-title">Input Fields</h2>
                 
                 <div class="input-group">
-                    <label for="fieldA">Field A (Required)</label>
-                    <input type="text" id="fieldA" placeholder="Enter text for field A">
+                    <label for="fieldID">Item ID</label>
+                    <input type="text" id="fieldID" placeholder="Enter text for ID">
                 </div>
                 
                 <div class="input-group">
-                    <label for="fieldB">Field B (Required)</label>
-                    <input type="text" id="fieldB" placeholder="Enter text for field B">
+                    <label for="fieldENCHANTMENTS">Enchantments</label>
+                    <input type="text" id="fieldB" placeholder="Enter text for the enchantments">
                 </div>
                 
                 <div class="input-group">
-                    <label for="fieldC">Field C (Required)</label>
-                    <input type="text" id="fieldC" placeholder="Enter text for field C">
+                    <label for="fieldBREAKABLE">What can the tool break</label>
+                    <input type="text" id="fieldBREAKABLE" placeholder="Enter text for breakable blocks">
+                </div>
+
+                <div class="input-group">
+                    <label for="fieldNAME_NAME">Item Name</label>
+                    <input type="text" id="fieldNAME_NAME" placeholder="Enter the item name">
+                </div>
+
+                <div class="input-group">
+                    <label for="fieldNAME_COLOR">Item name Color</label>
+                    <input type="text" id="fieldNAME_COLOR" placeholder="Enter a valid color">
+                </div>
+
+                <div class="input-group">
+                    <label for="fieldNAME_STARS">Input stars that will show the item's value</label>
+                    <input type="text" id="fieldNAME_STARS" placeholder="Enter stars">
                 </div>
                 
                 <div class="input-group">
@@ -211,9 +226,12 @@
         // Function to update the output in real-time
         function updateOutput() {
             // Get values from input fields
-            const fieldA = document.getElementById('fieldA').value || '[A]';
-            const fieldB = document.getElementById('fieldB').value || '[B]';
-            const fieldC = document.getElementById('fieldC').value || '[C]';
+            const fieldID = document.getElementById('fieldID').value || 'wooden_shovel';
+            const fieldENCHANTMENTS = document.getElementById('fieldENCHANTMENTS').value || '"minecraft:efficiency":1';
+            const fieldBREAKABLE = document.getElementById('fieldBREAKABLE').value || '"minecraft:sand"';
+            const fieldNAME_COLOR = document.getElementById('fieldNAME_COLOR').value || 'gray';
+            const fieldNAME_STARS = document.getElementById('fieldNAME_STARS').value || '★';
+            const fieldNAME_NAME = document.getElementById('fieldNAME_NAME').value || 'Crude Sand Shovel';
             const fieldD = document.getElementById('fieldD').value;
             const fieldE = document.getElementById('fieldE').value;
             
@@ -222,18 +240,23 @@
             const includeFieldE = document.getElementById('includeFieldE').checked;
             
             // Generate the output string
-            let output = `123${fieldA}, lebo ${fieldB}, ${fieldC}`;
-            
+            let output = `{id:${fieldID}, count:1, components: {"minecraft:can_break":{blocks:[${fieldBREAKABLE}], "minecraft:enchantments":{${fieldENCHANTMENTS}}, "minecraft:item_name":{color:"#FFD269",extra:[{color:"${fieldNAME_COLOR}",text:"${fieldNAME_NAME}"}],text:"${fieldNAME_STARS} "}, }}`;
+            // {id:wooden_shovel,count:1,components:{"minecraft:can_break":{blocks:["minecraft:sand"]},
+            // "minecraft:enchantments":{"minecraft:efficiency":1},"minecraft:item_name":{color:"#FFD269",extra:[{color:"gray",text:"Crude Sand Shovel"}],text:"★ "},
+            // "minecraft:lore":[{bold:1b,color:"gray",italic:0b,text:"Common"},{color:"white",italic:0b,text:"Sad looking shovel. It's very weak,"},{color:"white",italic:0b,text:"so it can only dig up sand!"},
+            // {color:"aqua",italic:0b,text:"¦ Efficiency: 1"},{color:"green",italic:0b,text:"⚒ Max Durability: 128"},{color:"red",italic:0b,text:"☄ Skin: NONE"}],
+            // "minecraft:max_damage":32,"minecraft:tooltip_display":{hidden_components:["minecraft:enchantments"]}}}},
+           
             // Add optional parts if checked and not empty
             if (includeFieldD && fieldD) {
-                output += `, yoo(${fieldD})`;
+                output += `${fieldD}`;
             }
             
             if (includeFieldE && fieldE) {
-                output += `, extra(${fieldE})`;
+                output += `${fieldE}`;
             }
             
-            output += ' ingus';
+            output += '';
             
             // Update the output element
             document.getElementById('generatedOutput').textContent = output;
