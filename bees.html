@@ -30,7 +30,7 @@
             <tr><td>Max Health</td><td colspan="2"><input type="number" id="max_health" value="50"></td></tr>
         </table>
         <hr>
-        <label for="seed">Seed (editable/copyable), (does not share the health values):</label><br>
+        <label for="seed">Seed (editable/copyable):</label><br>
         <input type="text" id="seed" size="50"><br>
         <button id="load_seed">Load Seed</button><br><br>
         <label for="nbt">NBT (copyable):</label><br>
@@ -168,6 +168,9 @@
                 seed += encodeIndex(idx_i, t.chars);
                 seed += encodeIndex(idx_a, t.chars);
             });
+            const health_val = parseInt(document.getElementbyId('health').value) || 0;
+                const max_health_val = parseInt(document.getElementById('max_health').value) || 0;
+                seed += encodeIndex(health-val, 3) + encodeIndex(max_health_val, 3);
             document.getElementById('seed').value = seed;
         }
 
@@ -183,12 +186,21 @@
                 if (idx_i < 0 || idx_i >= t.list.length || idx_a < 0 || idx_a >= t.list.length) {
                     valid = false;
                     return;
+                const health_idx = decodeIndex(seed.substring(pos, pos + 3), 3);
+                    pos += 3;
+                    const max_health_idx = decodeIndex(seed.substring(pos, pos + 3), 3);
+                    pos += 3;
+                    if (health_idx < 0 || health_idx > 190 || max_health_idx < 0 || max_health_idx > 190) {
+                        valid = false;
+                        return;
+                    }
                 }
                 document.getElementById(t.id_inact).value = t.list[idx_i];
                 document.getElementById(t.id_act).value = t.list[idx_a];
             });
             if (valid && pos === seed.length) {
                 updateNBT();
+                updateSeed();
             } else {
                 alert('Invalid seed');
             }
@@ -235,7 +247,7 @@
         });
         const nums = document.querySelectorAll('input[type=number]');
         nums.forEach(num => {
-            num.addEventListener('input', updateNBT);
+            num.addEventListener('input', () => {updateSeed(); updateNBT();});
         });
         document.getElementById('load_seed').addEventListener('click', loadSeed);
 
