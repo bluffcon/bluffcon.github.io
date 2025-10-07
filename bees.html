@@ -168,8 +168,8 @@
                 seed += encodeIndex(idx_i, t.chars);
                 seed += encodeIndex(idx_a, t.chars);
             });
-            const health_val = parseInt(document.getElementbyId('health').value) || 0;
-                const max_health_val = parseInt(document.getElementById('max_health').value) || 0;
+            const health_val = parseInt(document.getElementById('health').value) || 0;
+            const max_health_val = parseInt(document.getElementById('max_health').value) || 0;
                 seed += encodeIndex(health-val, 3) + encodeIndex(max_health_val, 3);
             document.getElementById('seed').value = seed;
         }
