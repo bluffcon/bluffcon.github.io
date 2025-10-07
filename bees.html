@@ -3,181 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <title>Bee Generator</title>
+    <style>
+        body { background: white; }
+        .center { margin: auto; width: 50%; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bee Generator</h1>
-        <h3>First trait is inactive (will show through breeding), second is active (current)</h3>
-        <div id="traits"></div>
-        <label>Health:</label> <input type="number" id="health" value="50"><br>
-        <label>Max Health:</label> <input type="number" id="max_health" value="60"><br>
-        <label>Seed:</label> <input type="text" id="seed"><br>
-        <label>NBT:</label> <textarea id="nbt" readonly rows="10" cols="80"></textarea><br>
+    <div class="center">
+        <h1>Forestry Bee Generator</h1>
+        <table>
+            <tr><th>Trait</th><th>Inactive</th><th>Active</th></tr>
+            <tr><td>Bee Species</td><td><select id="species_inact"></select></td><td><select id="species_act"></select></td></tr>
+            <tr><td>Cave Dwelling</td><td><select id="cave_inact"></select></td><td><select id="cave_act"></select></td></tr>
+            <tr><td>Fertility</td><td><select id="fert_inact"></select></td><td><select id="fert_act"></select></td></tr>
+            <tr><td>Speed</td><td><select id="speed_inact"></select></td><td><select id="speed_act"></select></td></tr>
+            <tr><td>Temperature Tolerance</td><td><select id="temp_inact"></select></td><td><select id="temp_act"></select></td></tr>
+            <tr><td>Territory</td><td><select id="terr_inact"></select></td><td><select id="terr_act"></select></td></tr>
+            <tr><td>Lifespan</td><td><select id="life_inact"></select></td><td><select id="life_act"></select></td></tr>
+            <tr><td>Bee Effect</td><td><select id="effect_inact"></select></td><td><select id="effect_act"></select></td></tr>
+            <tr><td>Pollination</td><td><select id="poll_inact"></select></td><td><select id="poll_act"></select></td></tr>
+            <tr><td>Flower Type</td><td><select id="flower_inact"></select></td><td><select id="flower_act"></select></td></tr>
+            <tr><td>Tolerates Rain</td><td><select id="rain_inact"></select></td><td><select id="rain_act"></select></td></tr>
+            <tr><td>Activity</td><td><select id="act_inact"></select></td><td><select id="act_act"></select></td></tr>
+            <tr><td>Humidity Tolerance</td><td><select id="humid_inact"></select></td><td><select id="humid_act"></select></td></tr>
+            <tr><td>Health</td><td colspan="2"><input type="number" id="health" value="50"></td></tr>
+            <tr><td>Max Health</td><td colspan="2"><input type="number" id="max_health" value="60"></td></tr>
+        </table>
+        <hr>
+        <label for="seed">Seed (editable/copyable):</label><br>
+        <input type="text" id="seed" size="50"><br>
+        <button id="load_seed">Load Seed</button><br><br>
+        <label for="nbt">NBT (copyable):</label><br>
+        <textarea id="nbt" readonly rows="10" cols="80"></textarea>
     </div>
     <script>
-        const valueLists = {
-            'cave_dwelling': ['forestry:falsed', 'forestry:trued'],
-            'fertility': ['forestry:0i', 'forestry:1id', 'forestry:2id', 'forestry:3i', 'forestry:4i'],
-            'speed': ['forestry:0.3fd', 'forestry:0.dfd', 'forestry:0.8fd', 'forestry:1.0f', 'forestry:1.2fd', 'forestry:1.4f', 'forestry:1.7f'],
-            'temperature_tolerance': ['forestry:tolerance_both_1d', 'forestry:tolerance_both_2', 'forestry:tolerance_down_1d', 'forestry:tolerance_down_2', 'forestry:tolerance_none', 'forestry:tolerance_up_1d', 'forestry:tolerance_up_2', 'forestry:tolerance_both_3', 'forestry:tolerance_down_3', 'forestry:tolerance_up_3', 'forestry:tolerance_both_4', 'forestry:tolerance_down_4', 'forestry:tolerance_up_4', 'forestry:tolerance_both_5', 'forestry:tolerance_down_5', 'forestry:tolerance_up_5'],
-            'territory': ['forestry:9_6_9', 'forestry:11_8_11', 'forestry:13_12_13', 'forestry:15_13_15'],
-            'bee_species': ['forestry:bee_abyssal', 'forestry:bee_agrarian', 'forestry:bee_anachrone', 'forestry:bee_aquatic', 'forestry:bee_argil', 'forestry:bee_austere', 'forestry:bee_autotrophic', 'forestry:bee_boggy', 'forestry:bee_common', 'forestry:bee_cultivated', 'forestry:bee_demonic', 'forestry:bee_diligent', 'forestry:bee_edenic', 'forestry:bee_embittered', 'forestry:bee_ended', 'forestry:bee_exotic', 'forestry:bee_farmerly', 'forestry:bee_fiendish', 'forestry:bee_forest', 'forestry:bee_frugal', 'forestry:bee_glacial', 'forestry:bee_hermitic', 'forestry:bee_heroic', 'forestry:bee_icy', 'forestry:bee_imperial', 'forestry:bee_industrious', 'forestry:bee_kleptoplatic', 'forestry:bee_leporine', 'forestry:bee_lush', 'forestry:bee_luxuriant', 'forestry:bee_majestic', 'forestry:bee_marshy', 'forestry:bee_meadows', 'forestry:bee_merry', 'forestry:bee_miry', 'forestry:bee_modest', 'forestry:bee_monastic', 'forestry:bee_noble', 'forestry:bee_patriotic', 'forestry:bee_phantasmal', 'forestry:bee_photosynthetic', 'forestry:bee_pirate', 'forestry:bee_pride', 'forestry:bee_primeval', 'forestry:bee_prismatic', 'forestry:bee_relic', 'forestry:bee_rural', 'forestry:bee_savanna', 'forestry:bee_sculk', 'forestry:bee_secluded', 'forestry:bee_seething', 'forestry:bee_shulking', 'forestry:bee_sinister', 'forestry:bee_spectral', 'forestry:bee_spiteful', 'forestry:bee_steadfast', 'forestry:bee_tipsy', 'forestry:bee_tricky', 'forestry:bee_tropical', 'forestry:bee_unweary', 'forestry:bee_valiant', 'forestry:bee_vanilla', 'forestry:bee_verdant', 'forestry:bee_warped', 'forestry:bee_wintry', 'forestry:bee_zombified', 'mobees:bee_alpine', 'mobees:bee_aluminum', 'mobees:bee_amethyst', 'mobees:bee_apatite', 'mobees:bee_arcane', 'mobees:bee_bee', 'mobees:bee_bony', 'mobees:bee_budding', 'mobees:bee_camouflaged', 'mobees:bee_chromatic', 'mobees:bee_classical', 'mobees:bee_coal', 'mobees:bee_copper', 'mobees:bee_creepy', 'mobees:bee_crimson', 'mobees:bee_crystalline', 'mobees:bee_cursed', 'mobees:bee_desolate', 'mobees:bee_devastated', 'mobees:bee_diamond', 'mobees:bee_disguised', 'mobees:bee_divine', 'mobees:bee_drowned', 'mobees:bee_emerald', 'mobees:bee_energetic', 'mobees:bee_ephemeral', 'mobees:bee_erudite', 'mobees:bee_excited', 'mobees:bee_forlorn', 'mobees:bee_fungal', 'mobees:bee_germinated', 'mobees:bee_glowstone', 'mobees:bee_gold', 'mobees:bee_harmonic', 'mobees:bee_hiker', 'mobees:bee_iron', 'mobees:bee_lapis', 'mobees:bee_lead', 'mobees:bee_lively', 'mobees:bee_marble', 'mobees:bee_mineral', 'mobees:bee_mysterious', 'mobees:bee_nautilus', 'mobees:bee_netherite', 'mobees:bee_nickel', 'mobees:bee_osmium', 'mobees:bee_phantom', 'mobees:bee_pilgrim', 'mobees:bee_pupil', 'mobees:bee_redstone', 'mobees:bee_resilient', 'mobees:bee_rocky', 'mobees:bee_rusty', 'mobees:bee_sage', 'mobees:bee_scrap', 'mobees:bee_sculpted', 'mobees:bee_shelled', 'mobees:bee_silver', 'mobees:bee_slimy', 'mobees:bee_soulful', 'mobees:bee_spirited', 'mobees:bee_spore', 'mobees:bee_stone', 'mobees:bee_studious', 'mobees:bee_tin', 'mobees:bee_tolerant', 'mobees:bee_turtle', 'mobees:bee_unusual', 'mobees:bee_warden', 'mobees:bee_witchy', 'mobees:bee_withered'],
-            'lifespan': ['forestry:10id', 'forestry:20id', 'forestry:2147483647i', 'forestry:30id', 'forestry:35id', 'forestry:10id', 'forestry:40i', 'forestry:45id', 'forestry:50i', 'forestry:60i', 'forestry:70i'],
-            'bee_effect': ['forestry:bee_effect_none', 'forestry:bee_effect_aggressive', 'forestry:bee_effect_ascension', 'forestry:bee_effect_beatific', 'forestry:bee_effect_chronophage', 'forestry:bee_effect_creeper', 'forestry:bee_effect_drunkard', 'forestry:bee_effect_easter', 'forestry:bee_effect_exploration', 'forestry:bee_effect_fertile', 'forestry:bee_effect_glacial', 'forestry:bee_effect_glow_berry_grow', 'forestry:bee_effect_guardian', 'forestry:bee_effect_hakuna_matata', 'forestry:bee_effect_heroic', 'forestry:bee_effect_ignition', 'forestry:bee_effect_miasmic', 'forestry:bee_effect_misanthrope', 'forestry:bee_effect_mycophilic', 'forestry:bee_effect_phasing', 'forestry:bee_effect_radioactive', 'forestry:bee_effect_reanimation', 'forestry:bee_effect_rejuvenation', 'forestry:bee_effect_repulsion', 'forestry:bee_effect_resurrection', 'forestry:bee_effect_sculk', 'forestry:bee_effect_sifter', 'forestry:bee_effect_snowing', 'mobees:bee_effect_arcane', 'mobees:bee_effect_camouflage', 'mobees:bee_effect_cave_sight', 'mobees:bee_effect_cursed', 'mobees:bee_effect_dark', 'mobees:bee_effect_librarian', 'mobees:bee_effect_melodic_chime', 'mobees:bee_effect_witching', 'mobees:bee_effect_withered'],
-            'pollination': ['forestry:5id', 'forestry:10i', 'forestry:15i', 'forestry:20i', 'forestry:25i', 'forestry:30i', 'forestry:35i', 'forestry:99id'],
-            'flower_type': ['forestry:flower_type_ancient', 'forestry:flower_type_cacti', 'forestry:flower_type_cave', 'forestry:flower_type_coral', 'forestry:flower_type_end', 'forestry:flower_type_gourd', 'forestry:flower_type_jungle', 'forestry:flower_type_mushrooms', 'forestry:flower_type_nether', 'forestry:flower_type_photosynthesis', 'forestry:flower_type_sculk', 'forestry:flower_type_sea', 'forestry:flower_type_snow', 'forestry:flower_type_vanilla', 'forestry:flower_type_wheat', 'mobees:flower_type_readable', 'mobees:flower_type_rock_aluminum', 'mobees:flower_type_rock_amethyst', 'mobees:flower_type_rock_certus_quartz', 'mobees:flower_type_rock_coal', 'mobees:flower_type_rock_cobalt', 'mobees:flower_type_rock_copper', 'mobees:flower_type_rock_diamond', 'mobees:flower_type_rock_emerald', 'mobees:flower_type_rock_gold', 'mobees:flower_type_rock_iron', 'mobees:flower_type_rock_lapis', 'mobees:flower_type_rock_lead', 'mobees:flower_type_rock_nickel', 'mobees:flower_type_rock_osmium', 'mobees:flower_type_rock_redstone', 'mobees:flower_type_rock_silver', 'mobees:flower_type_rock_stone', 'mobees:flower_type_rock_tin', 'mobees:flower_type_rock_yellorium', 'mobees:flower_type_rock_zinc'],
-            'tolerates_rain': ['forestry:falsed', 'forestry:trued'],
-            'activity': ['forestry:activity_cathemeral', 'forestry:activity_crepuscular', 'forestry:activity_diurnal', 'forestry:activity_metaturnal', 'forestry:activity_nocturnal'],
-            'humidity_tolerance': ['forestry:tolerance_both_1d', 'forestry:tolerance_both_2', 'forestry:tolerance_down_1d', 'forestry:tolerance_down_2', 'forestry:tolerance_none', 'forestry:tolerance_up_1d', 'forestry:tolerance_up_2']
-        };
+        const base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-        const traitOrder = [
-            'cave_dwelling', 'fertility', 'speed', 'temperature_tolerance', 'territory',
-            'bee_species', 'lifespan', 'bee_effect', 'pollination', 'flower_type',
-            'tolerates_rain', 'activity', 'humidity_tolerance'
+        const species_list = [
+            "forestry:bee_abyssal", "forestry:bee_agrarian", "forestry:bee_anachrone", "forestry:bee_aquatic", "forestry:bee_argil", "forestry:bee_austere", "forestry:bee_autotrophic", "forestry:bee_boggy", "forestry:bee_common", "forestry:bee_cultivated",
+            "forestry:bee_demonic", "forestry:bee_diligent", "forestry:bee_edenic", "forestry:bee_embittered", "forestry:bee_ended", "forestry:bee_exotic", "forestry:bee_farmerly", "forestry:bee_fiendish", "forestry:bee_forest", "forestry:bee_frugal",
+            "forestry:bee_glacial", "forestry:bee_hermitic", "forestry:bee_heroic", "forestry:bee_icy", "forestry:bee_imperial", "forestry:bee_industrious", "forestry:bee_kleptoplatic", "forestry:bee_leporine", "forestry:bee_lush", "forestry:bee_luxuriant",
+            "forestry:bee_majestic", "forestry:bee_marshy", "forestry:bee_meadows", "forestry:bee_merry", "forestry:bee_miry", "forestry:bee_modest", "forestry:bee_monastic", "forestry:bee_noble", "forestry:bee_patriotic", "forestry:bee_phantasmal",
+            "forestry:bee_photosynthetic", "forestry:bee_pirate", "forestry:bee_pride", "forestry:bee_primeval", "forestry:bee_prismatic", "forestry:bee_relic", "forestry:bee_rural", "forestry:bee_savanna", "forestry:bee_sculk", "forestry:bee_secluded",
+            "forestry:bee_seething", "forestry:bee_shulking", "forestry:bee_sinister", "forestry:bee_spectral", "forestry:bee_spiteful", "forestry:bee_steadfast", "forestry:bee_tipsy", "forestry:bee_tricky", "forestry:bee_tropical", "forestry:bee_unweary",
+            "forestry:bee_valiant", "forestry:bee_vanilla", "forestry:bee_verdant", "forestry:bee_warped", "forestry:bee_wintry", "forestry:bee_zombified", "mobees:bee_alpine", "mobees:bee_aluminum", "mobees:bee_amethyst", "mobees:bee_apatite",
+            "mobees:bee_arcane", "mobees:bee_bee", "mobees:bee_bony", "mobees:bee_budding", "mobees:bee_camouflaged", "mobees:bee_chromatic", "mobees:bee_classical", "mobees:bee_coal", "mobees:bee_copper", "mobees:bee_creepy",
+            "mobees:bee_crimson", "mobees:bee_crystalline", "mobees:bee_cursed", "mobees:bee_desolate", "mobees:bee_devastated", "mobees:bee_diamond", "mobees:bee_disguised", "mobees:bee_divine", "mobees:bee_drowned", "mobees:bee_emerald",
+            "mobees:bee_energetic", "mobees:bee_ephemeral", "mobees:bee_erudite", "mobees:bee_excited", "mobees:bee_forlorn", "mobees:bee_fungal", "mobees:bee_germinated", "mobees:bee_glowstone", "mobees:bee_gold", "mobees:bee_harmonic",
+            "mobees:bee_hiker", "mobees:bee_iron", "mobees:bee_lapis", "mobees:bee_lead", "mobees:bee_lively", "mobees:bee_marble", "mobees:bee_mineral", "mobees:bee_mysterious", "mobees:bee_nautilus", "mobees:bee_netherite",
+            "mobees:bee_nickel", "mobees:bee_osmium", "mobees:bee_phantom", "mobees:bee_pilgrim", "mobees:bee_pupil", "mobees:bee_redstone", "mobees:bee_resilient", "mobees:bee_rocky", "mobees:bee_rusty", "mobees:bee_sage",
+            "mobees:bee_scrap", "mobees:bee_sculpted", "mobees:bee_shelled", "mobees:bee_silver", "mobees:bee_slimy", "mobees:bee_soulful", "mobees:bee_spirited", "mobees:bee_spore", "mobees:bee_stone", "mobees:bee_studious",
+            "mobees:bee_tin", "mobees:bee_tolerant", "mobees:bee_turtle", "mobees:bee_unusual", "mobees:bee_warden", "mobees:bee_witchy", "mobees:bee_withered"
         ];
 
-        let selects = {};
+        const cave_list = ["forestry:falsed", "forestry:trued"];
+        const fert_list = ["forestry:0i", "forestry:1id", "forestry:2id", "forestry:3i", "forestry:4i"];
+        const speed_list = ["forestry:0.3fd", "forestry:0.dfd", "forestry:0.8fd", "forestry:1.0f", "forestry:1.2fd", "forestry:1.4f", "forestry:1.7f"];
+        const temp_list = ["forestry:tolerance_both_1d", "forestry:tolerance_both_2", "forestry:tolerance_down_1d", "forestry:tolerance_down_2", "forestry:tolerance_none", "forestry:tolerance_up_1d", "forestry:tolerance_up_2", "forestry:tolerance_both_3", "forestry:tolerance_down_3", "forestry:tolerance_up_3", "forestry:tolerance_both_4", "forestry:tolerance_down_4", "forestry:tolerance_up_4", "forestry:tolerance_both_5", "forestry:tolerance_down_5", "forestry:tolerance_up_5"];
+        const terr_list = ["forestry:9_6_9", "forestry:11_8_11", "forestry:13_12_13", "forestry:15_13_15"];
+        const life_list = ["forestry:10id", "forestry:20id", "forestry:2147483647i", "forestry:30id", "forestry:35id", "forestry:10id", "forestry:40i", "forestry:45id", "forestry:50i", "forestry:60i", "forestry:70i"];
+        const effect_list = ["forestry:bee_effect_none", "forestry:bee_effect_aggressive", "forestry:bee_effect_ascension", "forestry:bee_effect_beatific", "forestry:bee_effect_chronophage", "forestry:bee_effect_creeper", "forestry:bee_effect_drunkard", "forestry:bee_effect_easter", "forestry:bee_effect_exploration", "forestry:bee_effect_fertile", "forestry:bee_effect_glacial", "forestry:bee_effect_glow_berry_grow", "forestry:bee_effect_guardian", "forestry:bee_effect_hakuna_matata", "forestry:bee_effect_heroic", "forestry:bee_effect_ignition", "forestry:bee_effect_miasmic", "forestry:bee_effect_misanthrope", "forestry:bee_effect_mycophilic", "forestry:bee_effect_phasing", "forestry:bee_effect_radioactive", "forestry:bee_effect_reanimation", "forestry:bee_effect_rejuvenation", "forestry:bee_effect_repulsion", "forestry:bee_effect_resurrection", "forestry:bee_effect_sculk", "forestry:bee_effect_sifter", "forestry:bee_effect_snowing", "mobees:bee_effect_arcane", "mobees:bee_effect_camouflage", "mobees:bee_effect_cave_sight", "mobees:bee_effect_cursed", "mobees:bee_effect_dark", "mobees:bee_effect_librarian", "mobees:bee_effect_melodic_chime", "mobees:bee_effect_witching", "mobees:bee_effect_withered"];
+        const poll_list = ["forestry:5id", "forestry:10i", "forestry:15i", "forestry:20i", "forestry:25i", "forestry:30i", "forestry:35i", "forestry:99id"];
+        const flower_list = ["forestry:flower_type_ancient", "forestry:flower_type_cacti", "forestry:flower_type_cave", "forestry:flower_type_coral", "forestry:flower_type_end", "forestry:flower_type_gourd", "forestry:flower_type_jungle", "forestry:flower_type_mushrooms", "forestry:flower_type_nether", "forestry:flower_type_photosynthesis", "forestry:flower_type_sculk", "forestry:flower_type_sea", "forestry:flower_type_snow", "forestry:flower_type_vanilla", "forestry:flower_type_wheat", "mobees:flower_type_readable", "mobees:flower_type_rock_aluminum", "mobees:flower_type_rock_amethyst", "mobees:flower_type_rock_certus_quartz", "mobees:flower_type_rock_coal", "mobees:flower_type_rock_cobalt", "mobees:flower_type_rock_copper", "mobees:flower_type_rock_diamond", "mobees:flower_type_rock_emerald", "mobees:flower_type_rock_gold", "mobees:flower_type_rock_iron", "mobees:flower_type_rock_lapis", "mobees:flower_type_rock_lead", "mobees:flower_type_rock_nickel", "mobees:flower_type_rock_osmium", "mobees:flower_type_rock_redstone", "mobees:flower_type_rock_silver", "mobees:flower_type_rock_stone", "mobees:flower_type_rock_tin", "mobees:flower_type_rock_yellorium", "mobees:flower_type_rock_zinc"];
+        const rain_list = ["forestry:falsed", "forestry:trued"];
+        const act_list = ["forestry:activity_cathemeral", "forestry:activity_crepuscular", "forestry:activity_diurnal", "forestry:activity_metaturnal", "forestry:activity_nocturnal"];
+        const humid_list = ["forestry:tolerance_both_1d", "forestry:tolerance_both_2", "forestry:tolerance_down_1d", "forestry:tolerance_down_2", "forestry:tolerance_none", "forestry:tolerance_up_1d", "forestry:tolerance_up_2"];
 
-        traitOrder.forEach(trait => {
-            let div = document.createElement('div');
-            let label = document.createElement('label');
-            label.textContent = trait + ': ';
-            div.appendChild(label);
-            let inact = document.createElement('select');
-            let act = document.createElement('select');
-            valueLists[trait].forEach(val => {
-                let opt = document.createElement('option');
-                opt.value = val;
-                opt.text = val;
-                inact.appendChild(opt.cloneNode(true));
-                act.appendChild(opt);
-            });
-            div.appendChild(inact);
-            div.appendChild(act);
-            document.getElementById('traits').appendChild(div);
-            selects[trait] = { inactive: inact, active: act };
-        });
+        const trait_order = [
+            {id_inact: 'cave_inact', id_act: 'cave_act', list: cave_list, chars: 1},
+            {id_inact: 'fert_inact', id_act: 'fert_act', list: fert_list, chars: 1},
+            {id_inact: 'speed_inact', id_act: 'speed_act', list: speed_list, chars: 1},
+            {id_inact: 'temp_inact', id_act: 'temp_act', list: temp_list, chars: 1},
+            {id_inact: 'terr_inact', id_act: 'terr_act', list: terr_list, chars: 1},
+            {id_inact: 'species_inact', id_act: 'species_act', list: species_list, chars: 2},
+            {id_inact: 'life_inact', id_act: 'life_act', list: life_list, chars: 1},
+            {id_inact: 'effect_inact', id_act: 'effect_act', list: effect_list, chars: 1},
+            {id_inact: 'poll_inact', id_act: 'poll_act', list: poll_list, chars: 1},
+            {id_inact: 'flower_inact', id_act: 'flower_act', list: flower_list, chars: 1},
+            {id_inact: 'rain_inact', id_act: 'rain_act', list: rain_list, chars: 1},
+            {id_inact: 'act_inact', id_act: 'act_act', list: act_list, chars: 1},
+            {id_inact: 'humid_inact', id_act: 'humid_act', list: humid_list, chars: 1}
+        ];
 
-        function getCurrentValues() {
-            let values = {};
-            traitOrder.forEach(trait => {
-                values[trait] = {
-                    inactive: selects[trait].inactive.value,
-                    active: selects[trait].active.value
-                };
+        function populateSelect(id, list) {
+            const sel = document.getElementById(id);
+            list.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.text = v;
+                sel.appendChild(opt);
             });
-            return values;
+        }
+
+        function initDefaults() {
+            document.getElementById('species_inact').value = 'forestry:bee_forest';
+            document.getElementById('species_act').value = 'forestry:bee_forest';
+            trait_order.forEach(t => {
+                if (t.id_inact !== 'species_inact') {
+                    document.getElementById(t.id_inact).value = t.list[0];
+                    document.getElementById(t.id_act).value = t.list[0];
+                }
+            });
         }
 
         function updateNBT() {
-            let values = getCurrentValues();
-            let health = document.getElementById('health').value;
-            let max_health = document.getElementById('max_health').value;
-            let genome = '';
-            traitOrder.forEach(trait => {
-                genome += `"forestry:${trait}":{inactive:"${values[trait].inactive}",active:"${values[trait].active}"},`;
-            });
-            genome = genome.slice(0, -1);
-            let nbt = `{ForgeCaps:{Parent:{genome:{${genome}},analyzed:1b,health:${health},pristine:1b,max_health:${max_health}}}}`;
+            const cave_i = document.getElementById('cave_inact').value;
+            const cave_a = document.getElementById('cave_act').value;
+            const fert_i = document.getElementById('fert_inact').value;
+            const fert_a = document.getElementById('fert_act').value;
+            const speed_i = document.getElementById('speed_inact').value;
+            const speed_a = document.getElementById('speed_act').value;
+            const temp_i = document.getElementById('temp_inact').value;
+            const temp_a = document.getElementById('temp_act').value;
+            const terr_i = document.getElementById('terr_inact').value;
+            const terr_a = document.getElementById('terr_act').value;
+            const species_i = document.getElementById('species_inact').value;
+            const species_a = document.getElementById('species_act').value;
+            const life_i = document.getElementById('life_inact').value;
+            const life_a = document.getElementById('life_act').value;
+            const effect_i = document.getElementById('effect_inact').value;
+            const effect_a = document.getElementById('effect_act').value;
+            const poll_i = document.getElementById('poll_inact').value;
+            const poll_a = document.getElementById('poll_act').value;
+            const flower_i = document.getElementById('flower_inact').value;
+            const flower_a = document.getElementById('flower_act').value;
+            const rain_i = document.getElementById('rain_inact').value;
+            const rain_a = document.getElementById('rain_act').value;
+            const act_i = document.getElementById('act_inact').value;
+            const act_a = document.getElementById('act_act').value;
+            const humid_i = document.getElementById('humid_inact').value;
+            const humid_a = document.getElementById('humid_act').value;
+            const health = document.getElementById('health').value;
+            const max_health = document.getElementById('max_health').value;
+
+            const genome = `{"forestry:cave_dwelling":{inactive:"${cave_i}",active:"${cave_a}"},"forestry:fertility":{inactive:"${fert_i}",active:"${fert_a}"},"forestry:speed":{inactive:"${speed_i}",active:"${speed_a}"},"forestry:temperature_tolerance":{inactive:"${temp_i}",active:"${temp_a}"},"forestry:territory":{inactive:"${terr_i}",active:"${terr_a}"},"forestry:bee_species":{inactive:"${species_i}",active:"${species_a}"},"forestry:lifespan":{inactive:"${life_i}",active:"${life_a}"},"forestry:bee_effect":{inactive:"${effect_i}",active:"${effect_a}"},"forestry:pollination":{inactive:"${poll_i}",active:"${poll_a}"},"forestry:flower_type":{inactive:"${flower_i}",active:"${flower_a}"},"forestry:tolerates_rain":{inactive:"${rain_i}",active:"${rain_a}"},"forestry:activity":{inactive:"${act_i}",active:"${act_a}"},"forestry:humidity_tolerance":{inactive:"${humid_i}",active:"${humid_a}"}}`;
+            const nbt = `{ForgeCaps:{Parent:{genome:${genome},analyzed:1b,health:${health},pristine:1b,max_heath:${max_health}}}}`;
             document.getElementById('nbt').value = nbt;
         }
 
+        function encodeIndex(index, chars) {
+            let result = '';
+            for (let i = chars - 1; i >= 0; i--) {
+                const val = Math.floor(index / Math.pow(64, i)) % 64;
+                result += base64chars[val];
+            }
+            return result;
+        }
+
+        function decodeIndex(str, chars) {
+            let index = 0;
+            for (let i = 0; i < chars; i++) {
+                const val = base64chars.indexOf(str[i]);
+                if (val === -1) return -1;
+                index = index * 64 + val;
+            }
+            return index;
+        }
+
         function updateSeed() {
-            let values = getCurrentValues();
-            let active_species = values['bee_species'].active;
-            let parts = active_species.split(':');
-            if (parts.length !== 2) return;
-            let prefix = parts[0];
-            let species_name = parts[1];
-            let mod = prefix === 'forestry' ? '0' : prefix === 'mobees' ? '1' : null;
-            if (mod === null) return;
-            let indices = [];
-            let species_list = valueLists['bee_species'];
-            let inact_idx = species_list.indexOf(values['bee_species'].inactive);
-            if (inact_idx === -1) return;
-            indices.push(inact_idx);
-            traitOrder.forEach(trait => {
-                if (trait === 'bee_species') return;
-                let list = valueLists[trait];
-                let in_idx = list.indexOf(values[trait].inactive);
-                let ac_idx = list.indexOf(values[trait].active);
-                if (in_idx === -1 || ac_idx === -1) return;
-                indices.push(in_idx);
-                indices.push(ac_idx);
+            let seed = '';
+            trait_order.forEach(t => {
+                const idx_i = t.list.indexOf(document.getElementById(t.id_inact).value);
+                const idx_a = t.list.indexOf(document.getElementById(t.id_act).value);
+                seed += encodeIndex(idx_i, t.chars);
+                seed += encodeIndex(idx_a, t.chars);
             });
-            let data = indices.map(idx => idx.toString().padStart(3, '0')).join('');
-            let encoded = btoa(data);
-            let seed = '1' + mod + '_' + species_name + '_' + encoded;
             document.getElementById('seed').value = seed;
         }
 
-        function parseSeed(seed) {
-            if (!seed.startsWith('1')) return false;
-            let mod = seed[1];
-            if (mod !== '0' && mod !== '1') return false;
-            let rest = seed.slice(2);
-            let rest_parts = rest.split('_');
-            if (rest_parts.length !== 2) return false;
-            let species_name = rest_parts[0];
-            let encoded = rest_parts[1];
-            let prefix = mod === '0' ? 'forestry:' : 'mobees:';
-            let active_species = prefix + species_name;
-            let species_list = valueLists['bee_species'];
-            let active_idx = species_list.indexOf(active_species);
-            if (active_idx === -1) return false;
-            let data;
-            try {
-                data = atob(encoded);
-            } catch (e) {
-                return false;
-            }
-            if (data.length % 3 !== 0) return false;
-            let indices = [];
-            for (let i = 0; i < data.length; i += 3) {
-                let str = data.slice(i, i + 3);
-                indices.push(parseInt(str, 10));
-            }
-            let inact_species = species_list[indices[0]];
-            if (!inact_species) return false;
-            selects['bee_species'].inactive.value = inact_species;
-            selects['bee_species'].active.value = active_species;
-            let idx = 1;
-            traitOrder.forEach(trait => {
-                if (trait === 'bee_species') return;
-                let list = valueLists[trait];
-                let in_idx = indices[idx++];
-                let ac_idx = indices[idx++];
-                if (in_idx >= list.length || ac_idx >= list.length) return false;
-                selects[trait].inactive.value = list[in_idx];
-                selects[trait].active.value = list[ac_idx];
+        function loadSeed() {
+            const seed = document.getElementById('seed').value;
+            let pos = 0;
+            let valid = true;
+            trait_order.forEach(t => {
+                const idx_i = decodeIndex(seed.substring(pos, pos + t.chars), t.chars);
+                pos += t.chars;
+                const idx_a = decodeIndex(seed.substring(pos, pos + t.chars), t.chars);
+                pos += t.chars;
+                if (idx_i < 0 || idx_i >= t.list.length || idx_a < 0 || idx_a >= t.list.length) {
+                    valid = false;
+                    return;
+                }
+                document.getElementById(t.id_inact).value = t.list[idx_i];
+                document.getElementById(t.id_act).value = t.list[idx_a];
             });
-            updateNBT();
-            return true;
+            if (valid && pos === seed.length) {
+                updateNBT();
+            } else {
+                alert('Invalid seed');
+            }
         }
 
+        // Populate all selects
+        populateSelect('species_inact', species_list);
+        populateSelect('species_act', species_list);
+        populateSelect('cave_inact', cave_list);
+        populateSelect('cave_act', cave_list);
+        populateSelect('fert_inact', fert_list);
+        populateSelect('fert_act', fert_list);
+        populateSelect('speed_inact', speed_list);
+        populateSelect('speed_act', speed_list);
+        populateSelect('temp_inact', temp_list);
+        populateSelect('temp_act', temp_list);
+        populateSelect('terr_inact', terr_list);
+        populateSelect('terr_act', terr_list);
+        populateSelect('life_inact', life_list);
+        populateSelect('life_act', life_list);
+        populateSelect('effect_inact', effect_list);
+        populateSelect('effect_act', effect_list);
+        populateSelect('poll_inact', poll_list);
+        populateSelect('poll_act', poll_list);
+        populateSelect('flower_inact', flower_list);
+        populateSelect('flower_act', flower_list);
+        populateSelect('rain_inact', rain_list);
+        populateSelect('rain_act', rain_list);
+        populateSelect('act_inact', act_list);
+        populateSelect('act_act', act_list);
+        populateSelect('humid_inact', humid_list);
+        populateSelect('humid_act', humid_list);
+
         // Set defaults
-        let default_species = 'forestry:bee_forest';
-        selects['bee_species'].inactive.value = default_species;
-        selects['bee_species'].active.value = default_species;
-        traitOrder.forEach(trait => {
-            if (trait === 'bee_species') return;
-            selects[trait].inactive.value = valueLists[trait][0];
-            selects[trait].active.value = valueLists[trait][0];
-        });
+        initDefaults();
 
         // Event listeners
-        document.querySelectorAll('select').forEach(sel => {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(sel => {
             sel.addEventListener('change', () => {
                 updateSeed();
                 updateNBT();
             });
         });
-        document.getElementById('health').addEventListener('input', updateNBT);
-        document.getElementById('max_health').addEventListener('input', updateNBT);
-        document.getElementById('seed').addEventListener('input', e => {
-            parseSeed(e.target.value);
+        const nums = document.querySelectorAll('input[type=number]');
+        nums.forEach(num => {
+            num.addEventListener('input', updateNBT);
         });
+        document.getElementById('load_seed').addEventListener('click', loadSeed);
 
         // Initial update
         updateSeed();
