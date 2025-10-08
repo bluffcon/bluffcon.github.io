@@ -36,13 +36,13 @@
         <label for="nbt">NBT (copyable):</label><br>
         <textarea id="nbt" readonly rows="10" cols="80"></textarea>
         <br><h2>Give Bees</h2>
-        <label for="nbt">Give Queen:</label><br>
+        <br><label for="queennbt">Give Queen:</label><br>
         <textarea id="queennbt" readonly rows="10" cols="80"></textarea>
-        <label for="nbt">Give Drone:</label><br>
+        <br><label for="dronenbt">Give Drone:</label><br>
         <textarea id="dronenbt" readonly rows="10" cols="80"></textarea>
-        <label for="nbt">Give Princess:</label><br>
+        <br><label for="princessnbt">Give Princess:</label><br>
         <textarea id="princessnbt" readonly rows="10" cols="80"></textarea>
-        <label for="nbt">Give Larvae:</label><br>
+        <br><label for="larvaenbt">Give Larvae:</label><br>
         <textarea id="larvaenbt" readonly rows="10" cols="80"></textarea>
     </div>
     <script>
@@ -153,6 +153,10 @@
             const larvaenbt = `/give @p command_block{BlockEntityTag:{Command:"/give @p forestry:bee_larvae_ge${nbt} 1",auto:1b}}`;
             // /give @p command_block{BlockEntityTag:{Command:"/give @p diamond 1",auto:1b}}
             document.getElementById('nbt').value = nbt;
+            document.getElementById('queennbt').value = queennbt;
+            document.getElementById('dronenbt').value = dronenbt;
+            document.getElementById('princessnbt').value = princessnbt;
+            document.getElementById('larvaenbt').value = larvaenbt;
         }
 
         function encodeIndex(index, chars) {
