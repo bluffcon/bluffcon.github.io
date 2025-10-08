@@ -35,6 +35,15 @@
         <button id="load_seed">Load Seed</button><br><br>
         <label for="nbt">NBT (copyable):</label><br>
         <textarea id="nbt" readonly rows="10" cols="80"></textarea>
+        <br><h2>Give Bees</h2>
+        <label for="nbt">Give Queen:</label><br>
+        <textarea id="queennbt" readonly rows="10" cols="80"></textarea>
+        <label for="nbt">Give Drone:</label><br>
+        <textarea id="dronenbt" readonly rows="10" cols="80"></textarea>
+        <label for="nbt">Give Princess:</label><br>
+        <textarea id="princessnbt" readonly rows="10" cols="80"></textarea>
+        <label for="nbt">Give Larvae:</label><br>
+        <textarea id="larvaenbt" readonly rows="10" cols="80"></textarea>
     </div>
     <script>
         const base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -138,6 +147,11 @@
 
             const genome = `{"forestry:cave_dwelling":{inactive:"${cave_i}",active:"${cave_a}"},"forestry:fertility":{inactive:"${fert_i}",active:"${fert_a}"},"forestry:speed":{inactive:"${speed_i}",active:"${speed_a}"},"forestry:temperature_tolerance":{inactive:"${temp_i}",active:"${temp_a}"},"forestry:territory":{inactive:"${terr_i}",active:"${terr_a}"},"forestry:bee_species":{inactive:"${species_i}",active:"${species_a}"},"forestry:lifespan":{inactive:"${life_i}",active:"${life_a}"},"forestry:bee_effect":{inactive:"${effect_i}",active:"${effect_a}"},"forestry:pollination":{inactive:"${poll_i}",active:"${poll_a}"},"forestry:flower_type":{inactive:"${flower_i}",active:"${flower_a}"},"forestry:tolerates_rain":{inactive:"${rain_i}",active:"${rain_a}"},"forestry:activity":{inactive:"${act_i}",active:"${act_a}"},"forestry:humidity_tolerance":{inactive:"${humid_i}",active:"${humid_a}"}}`;
             const nbt = `{ForgeCaps:{Parent:{genome:${genome},analyzed:1b,health:${health},pristine:1b,max_heath:${max_health}}}}`;
+            const queennbt = `/give @p command_block{BlockEntityTag:{Command:"/give @p forestry:bee_queen_ge${nbt} 1",auto:1b}}`; 
+            const dronenbt = `/give @p command_block{BlockEntityTag:{Command:"/give @p forestry:bee_drone_ge${nbt} 1",auto:1b}}`;
+            const princessnbt = `/give @p command_block{BlockEntityTag:{Command:"/give @p forestry:bee_princess_ge${nbt} 1",auto:1b}}`;
+            const larvaenbt = `/give @p command_block{BlockEntityTag:{Command:"/give @p forestry:bee_larvae_ge${nbt} 1",auto:1b}}`;
+            // /give @p command_block{BlockEntityTag:{Command:"/give @p diamond 1",auto:1b}}
             document.getElementById('nbt').value = nbt;
         }
 
