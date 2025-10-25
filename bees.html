@@ -44,6 +44,11 @@
         <textarea id="princessnbt" readonly rows="10" cols="80"></textarea>
         <br><label for="larvaenbt">Give Larvae:</label><br>
         <textarea id="larvaenbt" readonly rows="10" cols="80"></textarea>
+        <br><label for="larvaenbt">HAPLOID Give Drone:</label><br>
+        <hr>
+        <textarea id="haploiddronenbt" readonly rows="10" cols="80"></textarea>
+        <br><label for="larvaenbt">HAPLOID NBT:</label><br>
+        <textarea id="haploidnbt" readonly rows="10" cols="80"></textarea>
     </div>
     <script>
         const base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -146,16 +151,21 @@
             const max_health = document.getElementById('max_health').value;
 
             const genome = `{"forestry:cave_dwelling":{inactive:"${cave_i}",active:"${cave_a}"},"forestry:fertility":{inactive:"${fert_i}",active:"${fert_a}"},"forestry:speed":{inactive:"${speed_i}",active:"${speed_a}"},"forestry:temperature_tolerance":{inactive:"${temp_i}",active:"${temp_a}"},"forestry:territory":{inactive:"${terr_i}",active:"${terr_a}"},"forestry:bee_species":{inactive:"${species_i}",active:"${species_a}"},"forestry:lifespan":{inactive:"${life_i}",active:"${life_a}"},"forestry:bee_effect":{inactive:"${effect_i}",active:"${effect_a}"},"forestry:pollination":{inactive:"${poll_i}",active:"${poll_a}"},"forestry:flower_type":{inactive:"${flower_i}",active:"${flower_a}"},"forestry:tolerates_rain":{inactive:"${rain_i}",active:"${rain_a}"},"forestry:activity":{inactive:"${act_i}",active:"${act_a}"},"forestry:humidity_tolerance":{inactive:"${humid_i}",active:"${humid_a}"}}`;
+            const activeGenome = `{"forestry:cave_dwelling":{inactive:"${cave_a}",active:"${cave_a}"},"forestry:fertility":{inactive:"${fert_a}",active:"${fert_a}"},"forestry:speed":{inactive:"${speed_a}",active:"${speed_a}"},"forestry:temperature_tolerance":{inactive:"${temp_a}",active:"${temp_a}"},"forestry:territory":{inactive:"${terr_a}",active:"${terr_a}"},"forestry:bee_species":{inactive:"${species_a}",active:"${species_a}"},"forestry:lifespan":{inactive:"${life_a}",active:"${life_a}"},"forestry:bee_effect":{inactive:"${effect_a}",active:"${effect_a}"},"forestry:pollination":{inactive:"${poll_a}",active:"${poll_a}"},"forestry:flower_type":{inactive:"${flower_a}",active:"${flower_a}"},"forestry:tolerates_rain":{inactive:"${rain_a}",active:"${rain_a}"},"forestry:activity":{inactive:"${act_a}",active:"${act_a}"},"forestry:humidity_tolerance":{inactive:"${humid_a}",active:"${humid_a}"}}`;
             const nbt = `{ForgeCaps:{Parent:{genome:${genome},analyzed:1b,health:${health},pristine:1b,max_heath:${max_health}}}}`;
+            const haploidnbt = `{ForgeCaps:{Parent:{genome:${activeGenome},analyzed:1b,health:${health},pristine:1b,max_heath:${max_health}}}}`;
             const queennbt = `/give @p forestry:bee_queen_ge${nbt}`; 
             const dronenbt = `/give @p forestry:bee_drone_ge${nbt}`;
             const princessnbt = `/give @p forestry:bee_princess_ge${nbt}`;
             const larvaenbt = `/give @p forestry:bee_larvae_ge${nbt}`;
+            const haploiddronenbt = `/give @p forestry:bee_drone_ge${haploidnbt}`;
             document.getElementById('nbt').value = nbt;
             document.getElementById('queennbt').value = queennbt;
             document.getElementById('dronenbt').value = dronenbt;
             document.getElementById('princessnbt').value = princessnbt;
             document.getElementById('larvaenbt').value = larvaenbt;
+            document.getElementById('haploiddronenbt').value = haploiddronenbt;
+            document.getElementById('haploidnbt').value = haploidnbt;
         }
 
         function encodeIndex(index, chars) {
